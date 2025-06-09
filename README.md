@@ -34,7 +34,7 @@ A browser-based Tic-Tac-Toe game built with TypeScript where users play against 
 
 ## AI Implementation
 
-The game features three distinct AI difficulty levels:
+The game features two distinct AI difficulty levels:
 
 ### Easy Mode
 The AI in easy mode is designed to ensure the player always wins:
@@ -66,15 +66,6 @@ The AI in easy mode is designed to ensure the player always wins:
    npm start
    ```
 5. Open your browser and navigate to `http://localhost:8080`
-
-## Build for Production
-
-To create a production build:
-```
-npm run build
-```
-
-The built files will be available in the `dist/` directory.
 
 ## Game Rules
 
