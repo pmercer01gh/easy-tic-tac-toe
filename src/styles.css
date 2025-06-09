@@ -1,0 +1,403 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    text-align: center;
+    background-color: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.controls {
+    margin: 1rem 0;
+    display: flex;
+    justify-content: center;
+}
+
+.skill-level {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.skill-level label {
+    font-weight: bold;
+    color: #555;
+}
+
+.skill-level select {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.status {
+    margin: 1rem 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #555;
+}
+
+/* Style for the disparaging messages in easy mode */
+.easy-mode-message {
+    color: #c0392b;
+    font-style: italic;
+    animation: pulse 1.5s infinite alternate;
+}
+
+/* Style for the doom message in hard mode */
+.hard-mode-message {
+    color: #ff0000;
+    text-transform: uppercase;
+    font-weight: 900;
+    font-size: 1.4em;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+    animation: doom-bounce 1s ease-in-out infinite;
+    letter-spacing: 2px;
+}
+
+@keyframes doom-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+    margin: 2rem auto;
+    max-width: 300px;
+}
+
+.cell {
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    height: 80px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cell:hover {
+    background-color: #d0d0d0;
+}
+
+.cell.x {
+    color: #e74c3c;
+}
+
+.cell.o {
+    color: #3498db;
+}
+
+.cell.disabled {
+    cursor: not-allowed;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.winner-highlight {
+    background-color: #ffe0b2;
+}
+
+/* Confetti container */
+.confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #f00;
+    opacity: 0;
+}
+
+/* Generate 50 pieces of confetti with different colors and animations */
+@keyframes confettiFall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.show-confetti .confetti-container {
+    animation: confettiDisplay 4s ease-out forwards;
+}
+
+@keyframes confettiDisplay {
+    0% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Create multiple confetti pieces with different colors and delays */
+.confetti:nth-child(5n + 1) { background-color: #f44336; }
+.confetti:nth-child(5n + 2) { background-color: #2196f3; }
+.confetti:nth-child(5n + 3) { background-color: #4caf50; }
+.confetti:nth-child(5n + 4) { background-color: #ffeb3b; }
+.confetti:nth-child(5n + 5) { background-color: #9c27b0; }
+
+/* Style for the skull container */
+.skull-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 120px;
+    z-index: 9999;
+    pointer-events: none;
+    filter: drop-shadow(0 0 20px #ff0000);
+}
+
+/* Skull face composed of multiple elements */
+.skull-face {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(45deg, #1a1a1a, #333);
+    border-radius: 60% 60% 45% 45%;
+    box-shadow: 
+        inset 0 0 10px rgba(0,0,0,0.8),
+        0 0 20px rgba(255,0,0,0.5);
+}
+
+.skull-eyes {
+    position: absolute;
+    width: 25px;
+    height: 35px;
+    background: #000;
+    border-radius: 50%;
+    top: 40px;
+    animation: glowingEyes 1s infinite alternate;
+}
+
+.skull-eyes::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #ff0000;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+}
+
+.skull-eyes.left {
+    left: 25px;
+}
+
+.skull-eyes.right {
+    right: 25px;
+}
+
+.skull-nose {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: #000;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.skull-teeth {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 20px;
+    background: linear-gradient(0deg, #333, #666);
+    border-radius: 0 0 10px 10px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 5px;
+}
+
+.tooth {
+    width: 8px;
+    height: 12px;
+    background: #fff;
+    border-radius: 0 0 2px 2px;
+}
+
+.show-skull .skull-container {
+    animation: skullLaugh 3s ease-in-out forwards;
+}
+
+@keyframes glowingEyes {
+    from {
+        box-shadow: inset 0 0 10px #ff0000;
+    }
+    to {
+        box-shadow: inset 0 0 20px #ff0000, 0 0 30px #ff0000;
+    }
+}
+
+@keyframes skullLaugh {
+    0% {
+        transform: translate(-50%, -50%) scale(0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        transform: translate(-50%, -50%) scale(2) rotate(-10deg);
+        opacity: 1;
+    }
+    20% {
+        transform: translate(-50%, -50%) scale(1.5) rotate(10deg);
+    }
+    30% {
+        transform: translate(-50%, -50%) scale(1.8) rotate(-5deg);
+    }
+    40% {
+        transform: translate(-50%, -50%) scale(1.6) rotate(5deg);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.7) rotate(0deg);
+    }
+    60% {
+        transform: translate(-50%, -50%) scale(1.6) translateY(-10px);
+    }
+    70% {
+        transform: translate(-50%, -50%) scale(1.7) translateY(0);
+    }
+    80% {
+        transform: translate(-50%, -50%) scale(1.6) translateY(-5px);
+    }
+    90% {
+        transform: translate(-50%, -50%) scale(1.7) translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(0) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Add an eerie glow to the game board when skull appears */
+.show-skull .game-board {
+    animation: evilGlow 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes evilGlow {
+    from {
+        box-shadow: 
+            0 0 20px #ff0000,
+            0 0 40px rgba(255, 0, 0, 0.5),
+            inset 0 0 20px rgba(255, 0, 0, 0.3);
+        filter: brightness(1.2);
+    }
+    to {
+        box-shadow: 
+            0 0 40px #ff0000,
+            0 0 60px rgba(255, 0, 0, 0.5),
+            inset 0 0 40px rgba(255, 0, 0, 0.3);
+        filter: brightness(1.4);
+    }
+}
+
+.game-board.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    position: relative;
+}
+
+.game-board.disabled::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    cursor: not-allowed;
+}
+
+select:invalid,
+select option[value=""] {
+    color: #666;
+}
+
+/* Style for the default option */
+select option:first-child {
+    font-style: italic;
+}
+
+@media (max-width: 500px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .game-board {
+        max-width: 240px;
+    }
+    
+    .cell {
+        height: 70px;
+        font-size: 2rem;
+    }
+}
