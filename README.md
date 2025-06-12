@@ -7,7 +7,7 @@ A browser-based Tic-Tac-Toe game built with TypeScript where users play against 
 - **Interactive Gameplay**: Classic 3x3 grid with X and O marks
 - **Player vs Computer**: Play against a computer opponent
 - **Two Difficulty Levels**:
-  - **Easy**: Player always wins (never ends in a draw)
+  - **Easy**: Player should win
   - **Hard**: Computer plays optimally
 - **Responsive Design**: Works on desktop and mobile devices
 - **Real-Time Feedback**: Game status and results clearly displayed
@@ -37,10 +37,8 @@ A browser-based Tic-Tac-Toe game built with TypeScript where users play against 
 The game features two distinct difficulty levels:
 
 ### Easy Mode
-The computer in easy mode is designed to ensure the player always wins:
-- Skips turns frequently to give the player an advantage
+The computer in easy mode is designed to help the player win:
 - Avoids blocking the player's winning moves
-- If a draw would occur, automatically gives the win to the player
 - Makes deliberately suboptimal moves
 
 ### Hard Mode
