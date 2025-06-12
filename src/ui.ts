@@ -140,7 +140,7 @@ export class GameUI {
             if (difficulty === 'easy') {
                 this.showEasyModeMessage();
             } else if (difficulty === 'hard') {
-                this.status.textContent = 'Prepare for your doom!';
+                this.status.textContent = 'Your doom is near!';
                 this.status.classList.add('hard-mode-message');
                 // Remove the class and update message after the animation completes
                 setTimeout(() => {
@@ -247,8 +247,7 @@ export class GameUI {
         this.renderBoard();
         this.isPlayerTurn = true;
     }
-    
-    /**
+      /**
      * Shows a disparaging message when easy mode is selected
      */
     private showEasyModeMessage(): void {
@@ -258,7 +257,19 @@ export class GameUI {
             "Easy mode? Don't worry, I'll let you win every time.",
             "Easy mode activated. Feel proud of yourself?",
             "I see you've chosen the 'training wheels' difficulty.",
-            "Easy mode selected. Your victories will be as hollow as my respect for this choice."
+            "Easy mode selected. Your victories will be as hollow as my respect for this choice.",
+            "Congratulations! You've chosen the difficulty level for people who find breathing challenging.",
+            "Easy mode? What's next, asking your mom to play for you?",
+            "I've seen rocks with more strategic thinking than easy mode players.",
+            "Easy mode: For when you want to feel smart without actually being smart.",
+            "Did you also need help opening this webpage?",
+            "Easy mode is like participation trophies - meaningless and embarrassing.",
+            "I'm programmed to let you win in easy mode. How does that make you feel?",
+            "Even my code is embarrassed to run this difficulty level.",
+            "Easy mode: The digital equivalent of bumper bowling.",
+            "Your choice of easy mode speaks volumes about your life choices.",
+            "I bet you use a calculator for basic math too.",
+            "Easy mode? Are you sure you're old enough to use a computer unsupervised?"
         ];
         
         // Pick a random disparaging message
@@ -275,7 +286,7 @@ export class GameUI {
             const state = this.game.getState();
             this.updateStatusMessage(state);
             this.status.classList.remove('easy-mode-message');
-        }, 3000);
+        }, 4000);
     }    private restartGame(): void {
         // Get the current selected difficulty
         const currentDifficulty = this.difficultySelect.value as 'easy' | 'hard';
@@ -390,14 +401,88 @@ export class GameUI {
             // Ignore audio play errors (some browsers block autoplay)
             console.log('Audio autoplay was blocked');
         });
-        
-        // Add animation class
+          // Add animation class
         document.body.classList.add('show-skull');
         
-        // Remove skull after animation ends
+        // Remove skull after animation ends and then show virus animation
         setTimeout(() => {
             document.body.classList.remove('show-skull');
             skullContainer.remove();
+            
+            // Start virus animation after skull disappears
+            setTimeout(() => {
+                this.showVirusAnimation();
+            }, 500);
         }, 3000);
+    }
+
+    private showVirusAnimation(): void {
+        // Remove any existing virus container
+        const existingVirus = document.querySelector('.virus-container');
+        if (existingVirus) {
+            existingVirus.remove();
+        }
+
+        // Create the virus download container
+        const virusContainer = document.createElement('div');
+        virusContainer.className = 'virus-container';
+
+        // Create the content
+        virusContainer.innerHTML = `
+            <div class="virus-title">⚠️ SYSTEM COMPROMISED ⚠️</div>
+            <div class="virus-message">Downloading virus...</div>
+            
+            <div class="virus-progress">
+                <div class="virus-progress-bar">
+                    <div class="virus-progress-fill"></div>
+                    <div class="virus-percentage">0%</div>
+                </div>
+            </div>
+            
+            <div class="virus-files">
+                <div class="virus-file-line">Installing: trojan_horse.exe</div>
+                <div class="virus-file-line">Installing: keylogger.dll</div>
+                <div class="virus-file-line">Installing: ransomware.sys</div>
+                <div class="virus-file-line">Installing: bitcoin_miner.exe</div>
+                <div class="virus-file-line">Installing: data_harvester.bat</div>
+            </div>
+            
+            <div class="virus-warning">YOUR DEVICE HAS BEEN INFECTED!</div>
+        `;
+
+        // Add to document
+        document.body.appendChild(virusContainer);
+
+        // Show the container
+        setTimeout(() => {
+            virusContainer.classList.add('show');
+        }, 100);
+
+        // Animate the percentage counter
+        const percentageElement = virusContainer.querySelector('.virus-percentage') as HTMLElement;
+        let percentage = 0;
+        const percentageInterval = setInterval(() => {
+            percentage += Math.random() * 15 + 5; // Increase by 5-20% each time
+            if (percentage > 100) percentage = 100;
+            
+            percentageElement.textContent = `${Math.floor(percentage)}%`;
+            
+            if (percentage >= 100) {
+                clearInterval(percentageInterval);
+                percentageElement.textContent = '100%';
+                
+                // Change message when complete
+                setTimeout(() => {
+                    const messageElement = virusContainer.querySelector('.virus-message') as HTMLElement;
+                    messageElement.textContent = 'Download complete! Your device is now infected.';
+                    messageElement.style.color = '#ff0000';
+                }, 500);
+            }
+        }, 200);
+
+        // Remove virus container after animation
+        setTimeout(() => {
+            virusContainer.remove();
+        }, 7000);
     }
 }
