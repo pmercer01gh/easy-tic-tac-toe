@@ -1,6 +1,6 @@
 # Tic-Tac-Toe Game
 
-A browser-based Tic-Tac-Toe game built with TypeScript where users play against an AI opponent with adjustable difficulty levels.
+A browser-based Tic-Tac-Toe game built with TypeScript where users play against a computer opponent with adjustable difficulty levels.
 
 ## Features
 
@@ -23,7 +23,7 @@ A browser-based Tic-Tac-Toe game built with TypeScript where users play against 
 ## Project Structure
 
 - `src/` - Source code directory
-  - `game.ts` - Core game logic and AI implementation
+  - `game.ts` - Core game logic and implementation
   - `ui.ts` - UI controller for game interactions
   - `index.ts` - Application entry point
   - `index.html` - HTML template
@@ -32,12 +32,12 @@ A browser-based Tic-Tac-Toe game built with TypeScript where users play against 
 - `tsconfig.json` - TypeScript configuration
 - `package.json` - Project dependencies and scripts
 
-## AI Implementation
+## Implementation
 
-The game features two distinct AI difficulty levels:
+The game features two distinct difficulty levels:
 
 ### Easy Mode
-The AI in easy mode is designed to ensure the player always wins:
+The computer in easy mode is designed to ensure the player always wins:
 - Skips turns frequently to give the player an advantage
 - Avoids blocking the player's winning moves
 - If a draw would occur, automatically gives the win to the player
