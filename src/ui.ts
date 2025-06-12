@@ -203,13 +203,11 @@ export class GameUI {
             const state = this.game.getState();
             if (state.status === 'playing') {
                 // If the game is still playing, make the computer move
-                this.isPlayerTurn = false;
-                
-                // Show different message based on whether we expect a skip
+                this.isPlayerTurn = false;                // Show different message based on whether we expect a skip
                 const isDifficultyEasy = this.difficultySelect.value === 'easy';
                 const computerMovesCount = state.board.filter(cell => cell === 'O').length;
                 
-                if (isDifficultyEasy && computerMovesCount >= 2) {
+                if (isDifficultyEasy && computerMovesCount >= 4) {
                     this.status.textContent = 'Computer is genuinely stumped!';
                 } else {
                     this.status.textContent = 'Computer is thinking...';
@@ -229,15 +227,13 @@ export class GameUI {
         this.game.makeComputerMove();
         
         // Get the player after the computer move
-        const afterMove = this.game.getState().currentPlayer;
-        
-        // Check if the computer skipped its turn (easy mode)
+        const afterMove = this.game.getState().currentPlayer;        // Check if the computer skipped its turn (easy mode)
         if (beforeMove === afterMove) {
-            // If the game is in easy mode and has made 2 moves already, show the stumped message
+            // If the game is in easy mode and has made 4 moves already, show the stumped message
             const isDifficultyEasy = this.difficultySelect.value === 'easy';
             const computerMovesCount = this.game.getState().board.filter(cell => cell === 'O').length;
             
-            if (isDifficultyEasy && computerMovesCount >= 2) {
+            if (isDifficultyEasy && computerMovesCount >= 4) {
                 this.status.textContent = 'Computer is genuinely stumped! Your turn again!';
             } else {
                 this.status.textContent = 'Computer skipped its turn. Your turn again!';

@@ -133,17 +133,16 @@ export class TicTacToeGame {
             const board = this.state.board;
             // Human player is always X
             const humanPlayer = 'X';
-            
-            // Check if computer has already made its 2 moves
-            if (this.computerMoveCount >= 2) {
-                // Always skip all subsequent turns in easy mode after 2 moves
+              // Check if computer has already made its 4 moves
+            if (this.computerMoveCount >= 4) {
+                // Always skip all subsequent turns in easy mode after 4 moves
                 this.state.currentPlayer = humanPlayer;
                 return true; // Pretend we made a move
             } else {
                 // This is one of the computer's initial moves in easy mode
                 // We'll make this move and then count it
                 this.computerMoveCount++;
-            }        }
+            }}
         
         // Normal move logic if we didn't skip the turn
         const bestMove = this.findBestMove();
@@ -170,6 +169,10 @@ export class TicTacToeGame {
         if (this.difficulty === 'easy') {
             // In easy mode, always ensure player X wins
             const playerX = 'X';
+              // Special handling for the third and fourth moves - make them extra sub-optimal
+            if (this.computerMoveCount === 3 || this.computerMoveCount === 4) {
+                return this.findMostSubOptimalMove(board, playerX, availableMoves);
+            }
             
             // First check: If player is one move away from winning, DON'T EVER block them
             const playerWinningMove = this.findWinningMove(board, playerX);
@@ -194,12 +197,25 @@ export class TicTacToeGame {
                 if (nonWinningMoves.length > 0) {
                     return nonWinningMoves[Math.floor(Math.random() * nonWinningMoves.length)];
                 }
+                
+                // If we can't avoid the winning move (only one move left), skip the turn
+                if (availableMoves.length === 1) {
+                    // Just pick any move that's not a winning move for us
+                    const computerWinningMove = this.findWinningMove(board, computerPlayer);
+                    if (computerWinningMove !== -1) {
+                        const nonWinningMoves = availableMoves.filter(move => move !== computerWinningMove);
+                        if (nonWinningMoves.length > 0) {
+                            return nonWinningMoves[Math.floor(Math.random() * nonWinningMoves.length)];
+                        }
+                    }
+                }
             }
-              // Special case: If we're approaching a potential draw, force a loss
+            
+            // Special case: If we're approaching a potential draw, force a loss
             // Modified to be more aggressive - trigger this check with more moves remaining
             if (availableMoves.length <= 6) {
                 // Find a move that gives the player a winning path after we move
-                const forcedLossMoves = this.findForcedLossMoves(board, humanPlayer);
+                const forcedLossMoves = this.findForcedLossMoves(board, playerX);
                 if (forcedLossMoves.length > 0) {
                     return forcedLossMoves[Math.floor(Math.random() * forcedLossMoves.length)];
                 }
@@ -218,7 +234,7 @@ export class TicTacToeGame {
             }
             
             // Third check: If we can create a situation where the player can win next turn, do that
-            const movesThatSetupPlayerWin = this.findMovesThatSetupPlayerWin(board, humanPlayer);
+            const movesThatSetupPlayerWin = this.findMovesThatSetupPlayerWin(board, playerX);
             if (movesThatSetupPlayerWin.length > 0) {
                 return movesThatSetupPlayerWin[Math.floor(Math.random() * movesThatSetupPlayerWin.length)];
             }
@@ -232,9 +248,10 @@ export class TicTacToeGame {
             }
             
             // If all else fails, choose a corner or edge that's most likely to let the player win
-            return this.findLeastCompetitiveMove(board, humanPlayer, availableMoves);
+            return this.findLeastCompetitiveMove(board, playerX, availableMoves);
         }
-          // Hard mode: Try to win first
+        
+        // Hard mode: Try to win first
         const winMove = this.findWinningMove(board, computerPlayer);
         if (winMove !== -1) return winMove;
         
@@ -262,8 +279,7 @@ export class TicTacToeGame {
         
         // No move found
         return -1;
-    }
-      private findWinningMove(board: CellValue[], player: Player): number {
+    }    private findWinningMove(board: CellValue[], player: Player): number {
         const winPatterns = [
             // Rows
             [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -288,7 +304,8 @@ export class TicTacToeGame {
         }
         
         return -1;
-    }    /**
+    }
+      /**
      * Find moves that would potentially let the player win in their next turn
      * For easy mode, this helps the computer make deliberately bad moves
      */
@@ -588,5 +605,79 @@ export class TicTacToeGame {
         
         // Return all cells that are not in the pattern
         return allCells.filter(cell => !pattern.includes(cell));
+    }    /**
+     * Find the most sub-optimal move for the third and fourth computer moves in easy mode
+     * This deliberately chooses the worst possible move to help the player win
+     */
+    private findMostSubOptimalMove(board: CellValue[], player: Player, availableMoves: number[]): number {
+        // Strategy for the worst possible move:
+        // 1. Choose a move that directly sets up the player for multiple winning paths
+        // 2. If that's not available, choose a move that blocks the computer's own strategic positions
+        // 3. Avoid any move that would help the computer
+        
+        // First, try to find moves that create multiple winning opportunities for the player
+        const movesThatCreateMultipleWins = this.findMovesThatCreateMultipleWinningPaths(board, player, availableMoves);
+        if (movesThatCreateMultipleWins.length > 0) {
+            return movesThatCreateMultipleWins[Math.floor(Math.random() * movesThatCreateMultipleWins.length)];
+        }
+        
+        // Second, try moves that directly set up player wins
+        const movesThatSetupPlayerWin = this.findMovesThatSetupPlayerWin(board, player);
+        const validSetupMoves = movesThatSetupPlayerWin.filter(move => availableMoves.includes(move));
+        if (validSetupMoves.length > 0) {
+            return validSetupMoves[Math.floor(Math.random() * validSetupMoves.length)];
+        }
+        
+        // Third, avoid strategic positions (center, corners) and choose edges
+        const edges = [1, 3, 5, 7];
+        const availableEdges = edges.filter(edge => availableMoves.includes(edge));
+        if (availableEdges.length > 0) {
+            return availableEdges[Math.floor(Math.random() * availableEdges.length)];
+        }
+        
+        // Last resort: any available move
+        return availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    }
+
+    /**
+     * Find moves that create multiple winning paths for the player
+     */
+    private findMovesThatCreateMultipleWinningPaths(board: CellValue[], player: Player, availableMoves: number[]): number[] {
+        const movesWithMultiplePaths: number[] = [];
+        const computerPlayer = player === 'X' ? 'O' : 'X';
+        
+        for (const move of availableMoves) {
+            // Make the computer move
+            const boardCopy = [...board];
+            boardCopy[move] = computerPlayer;
+            
+            // Count how many winning opportunities this creates for the player
+            let winningPathCount = 0;
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+                [0, 4, 8], [2, 4, 6] // diagonals
+            ];
+            
+            // Check each pattern to see if it gives the player winning opportunities
+            for (const pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                const cells = [boardCopy[a], boardCopy[b], boardCopy[c]];
+                const playerCount = cells.filter(cell => cell === player).length;
+                const emptyCount = cells.filter(cell => cell === null).length;
+                
+                // If player has 1 mark and 2 empty spaces, they could potentially win here
+                if (playerCount >= 1 && emptyCount >= 1) {
+                    winningPathCount++;
+                }
+            }
+            
+            // If this move creates multiple potential winning paths for the player, it's sub-optimal
+            if (winningPathCount >= 2) {
+                movesWithMultiplePaths.push(move);
+            }
+        }
+        
+        return movesWithMultiplePaths;
     }
 }
